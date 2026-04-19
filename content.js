@@ -10,6 +10,8 @@
   const PAGE_MESSAGE_SOURCE = "999helper-page";
   const HIDDEN_ATTRIBUTE = "data-999helper-hidden";
   const HIDDEN_STYLE_ID = "999helper-hidden-style";
+  const HIDDEN_COUNT_ATTRIBUTE = "data-999helper-hidden-count";
+  const HIDDEN_COUNT_CONTAINER_SELECTOR = 'div[class*="styles_header__actions"]';
   const SLICK_TRACK_SELECTOR = '[data-testid="slick-track"]';
   const LIST_PAGE_URL_FRAGMENT = "https://999.md/ro/list/real-estate/apartments-and-rooms?";
   const LIST_CARD_SELECTORS = [
@@ -47,8 +49,6 @@
 
     state.blockedStreets = sanitizeBlockedStreets(stored[STORAGE_KEYS.blockedStreets]);
     state.addressCache = sanitizeAddressCache(stored[STORAGE_KEYS.addressCache]);
-
-    observeDom();
     scheduleRescan("init");
   }
 
@@ -83,18 +83,6 @@
     });
   }
 
-  function observeDom() {
-    const observer = new MutationObserver(() => {
-      removeSlickTrackElements();
-      scheduleRescan("mutation");
-    });
-
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-    });
-  }
-
   function removeSlickTrackElements() {
     if (!window.location.href.includes(LIST_PAGE_URL_FRAGMENT)) {
       return;
@@ -107,6 +95,11 @@
 
   function handlePageMessage(event) {
     if (event.source !== window || !event.data || event.data.source !== PAGE_MESSAGE_SOURCE) {
+      return;
+    }
+
+    if (event.data.type === "locationChange") {
+      scheduleRescan("url-change");
       return;
     }
 
@@ -147,6 +140,8 @@
   }
 
   async function rescanPage(reason) {
+    removeSlickTrackElements();
+
     const cards = collectListingCards();
 
     for (const card of cards) {
@@ -361,6 +356,8 @@
   }
 
   function applyHiddenState(cards) {
+    let hiddenCount = 0;
+
     for (const card of cards) {
       const adId = getAdIdFromCard(card);
 
@@ -377,10 +374,31 @@
       if (shouldHide) {
         console.log("[999helper] attempting to hide card", { adId, matchedStreet, address });
         card.setAttribute(HIDDEN_ATTRIBUTE, "true");
+        hiddenCount += 1;
       } else {
         card.removeAttribute(HIDDEN_ATTRIBUTE);
       }
     }
+
+    renderHiddenCount(hiddenCount);
+  }
+
+  function renderHiddenCount(hiddenCount) {
+    const container = document.querySelector(HIDDEN_COUNT_CONTAINER_SELECTOR);
+
+    if (!container) {
+      return;
+    }
+
+    let indicator = container.querySelector(`[${HIDDEN_COUNT_ATTRIBUTE}]`);
+
+    if (!indicator) {
+      indicator = document.createElement("div");
+      indicator.setAttribute(HIDDEN_COUNT_ATTRIBUTE, "true");
+      container.appendChild(indicator);
+    }
+
+    indicator.textContent = `Hidden: ${hiddenCount}`;
   }
 
   function findCardElement(link) {

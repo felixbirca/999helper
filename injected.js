@@ -7,6 +7,17 @@
   }
 
   window[FLAG] = true;
+  let lastLocationHref = window.location.href;
+
+  function emitPageMessage(payload) {
+    window.postMessage(
+      {
+        source: MESSAGE_SOURCE,
+        ...payload,
+      },
+      window.location.origin
+    );
+  }
 
   function isGraphqlUrl(url) {
     return typeof url === "string" && url.includes("/graphql");
@@ -35,14 +46,41 @@
       return;
     }
 
-    window.postMessage(
-      {
-        source: MESSAGE_SOURCE,
-        type: "searchAdsResult",
-        adIds,
-      },
-      window.location.origin
-    );
+    emitPageMessage({
+      type: "searchAdsResult",
+      adIds,
+    });
+  }
+
+  function emitLocationChange() {
+    const nextHref = window.location.href;
+
+    if (nextHref === lastLocationHref) {
+      return;
+    }
+
+    lastLocationHref = nextHref;
+    emitPageMessage({ type: "locationChange" });
+  }
+
+  function installUrlChangeHandlers() {
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function patchedPushState(...args) {
+      const result = originalPushState.apply(this, args);
+      emitLocationChange();
+      return result;
+    };
+
+    history.replaceState = function patchedReplaceState(...args) {
+      const result = originalReplaceState.apply(this, args);
+      emitLocationChange();
+      return result;
+    };
+
+    window.addEventListener("popstate", emitLocationChange);
+    window.addEventListener("hashchange", emitLocationChange);
   }
 
   function inspectJsonPayload(url, payload) {
@@ -109,4 +147,6 @@
 
     return originalSend.apply(this, args);
   };
+
+  installUrlChangeHandlers();
 })();
