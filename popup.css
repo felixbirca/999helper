@@ -1,0 +1,108 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 340px;
+  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #111827;
+  background: #f8fafc;
+}
+
+.popup {
+  padding: 16px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.subtitle {
+  margin: 0 0 14px;
+  color: #475569;
+}
+
+.street-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.actions {
+  margin-bottom: 10px;
+}
+
+.street-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.street-form button,
+.secondary-button,
+.remove-button {
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
+.street-form button {
+  padding: 10px 14px;
+}
+
+.secondary-button {
+  width: 100%;
+  padding: 10px 12px;
+  background: #475569;
+}
+
+.status {
+  min-height: 18px;
+  margin: 0 0 10px;
+  color: #64748b;
+}
+
+.street-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.street-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.street-label {
+  font-weight: 600;
+}
+
+.remove-button {
+  padding: 8px 10px;
+  background: #dc2626;
+}
+
+.street-list:empty::before {
+  content: "No blocked streets yet.";
+  display: block;
+  padding: 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #64748b;
+  background: #fff;
+}

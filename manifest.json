@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "999.md Street Filter",
+  "version": "0.1.0",
+  "description": "Hide 999.md apartment listings whose addresses contain blocked street names.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://999.md/*"
+  ],
+  "action": {
+    "default_title": "999.md Street Filter",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://999.md/ro/list/real-estate/apartments-and-rooms*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "injected.js"
+      ],
+      "matches": [
+        "https://999.md/*"
+      ]
+    }
+  ]
+}

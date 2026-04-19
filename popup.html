@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>999.md Street Filter</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <h1>999.md Street Filter</h1>
+      <p class="subtitle">Hide RO apartment listings when the address contains one of these street names.</p>
+
+      <form id="street-form" class="street-form">
+        <input
+          id="street-input"
+          name="street"
+          type="text"
+          autocomplete="off"
+          placeholder="Example: Alecu Russo"
+        />
+        <button type="submit">Add</button>
+      </form>
+
+      <div class="actions">
+        <button id="clear-cache-button" type="button" class="secondary-button">Clear address cache</button>
+      </div>
+
+      <p id="status" class="status" aria-live="polite"></p>
+      <ul id="street-list" class="street-list"></ul>
+
+      <template id="street-item-template">
+        <li class="street-item">
+          <span class="street-label"></span>
+          <button type="button" class="remove-button">Remove</button>
+        </li>
+      </template>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
